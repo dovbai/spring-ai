@@ -36,11 +36,23 @@ public class OllamaService {
         this.restTemplate = restTemplate;
     }
 
+    private record PromptInfo (String model, String prompt, boolean stream) {}
+
+
+
     // Format input data as a json string
     private String createBody( String model, String prompt, boolean stream ) {
-        String outString = String.format("{\"model\":\"%s\",", model);
-        outString += String.format("\"prompt\":\"%s\",", prompt);
-        outString += String.format("\"stream\":%b}", stream);
+        PromptInfo promptInfo = new PromptInfo(model, prompt, stream);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String outString = null;
+        try {
+            outString = objectMapper.writeValueAsString(promptInfo);
+            logger.info("Mapped PromptInfo object to : " + outString);
+        } catch( JsonProcessingException e) {
+            logger.error("Caught JsonProcessingExeption", e);
+        }
 
         return outString;
     }
@@ -54,9 +66,24 @@ public class OllamaService {
         }
     }
 
+    private long countNewLines( String str ) {
+        return str.chars().filter(ch->ch=='\n').count();
+    }
+
+    private String replaceNewLines( String str ) {
+        return str.replace("\n", "\\\\n");
+    }
+
     public ResponseEntity<QueryResponse> queryOllama( String prompt ) {
 
         logger.info("queryOllama: got prompt: " + prompt);
+        long newLinesCount = countNewLines(prompt);
+        if( newLinesCount > 0) {
+            logger.info("Input prompt contains " + newLinesCount + " new linee characters");
+            prompt = replaceNewLines(prompt);
+            logger.info("Processed line: " + prompt);
+        }
+
         String url = baseUrl + "/generate";
 
         // Prepare headers
