@@ -6,12 +6,13 @@ from io import BytesIO
 def get_prompt():
     #prompt="Write a python function to add two numbers"
     #prompt="How to convert a java string to a stream of integers ?"
-    prompt="""I want to write a java utility which does the following:
-    1. Read the contents of a text file. The contents are the query.
-    2. Create a json object with propery \'prompt\' and value is the content of the query from 1.
-    3. Post the json object to the url="http://localhost:80/query".
-    4. Receive the response. If status code is 200 (OK) retrieve the response as a json object and
-    write the value of the propery \'modelResponse\' to stdout"""
+    # prompt="""I want to write a java utility which does the following:
+    # 1. Read the contents of a text file. The contents are the query.
+    # 2. Create a json object with propery \'prompt\' and value is the content of the query from 1.
+    # 3. Post the json object to the url="http://localhost:80/query".
+    # 4. Receive the response. If status code is 200 (OK) retrieve the response as a json object and
+    # write the value of the propery \'modelResponse\' to stdout"""
+    prompt="I want to use Flask for creating a local server to interact with the ollama service. How to proceed ?"
     
     return prompt
 
